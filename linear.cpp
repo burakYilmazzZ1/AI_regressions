@@ -47,68 +47,81 @@ vector<vector<double> > readCSV(const string &filename) {
 
     return data;
 }
-pair<double,double> initial_Weight(){
+
+pair<double, double>initialWeigth(){
     double w=0.0;
     double b=0.0;
-    return make_pair(w,b);
+
+    return make_pair(w, b);
 }
-double predict(double x,double w,double b){
+
+double predict(double x,double w, double b){
     return w*x+b;
 }
 double computeMSE(const vector<vector<double> >&data,double w,double b){
     double mse=0.0;
     int n=data.size();
+
     for(int i=0;i<n;i++){
+        
         double x=data[i][0];
         double y=data[i][1];
         double y_pred=predict(x,w,b);
         mse+=pow(y-y_pred,2);
+
     }
     return mse/n;
 }
-pair<double,double>gradient_Descent(const vector<vector<double> >&data,double w,double b,double learningRate){
-    double w_grad=0.0;
-    double b_grad=0.0;
-    int n=data.size();
-    for (int i = 0; i < n; i++)
-    {
-        double x=data[i][0];
-        double y=data[i][1];
-        double error=predict(x,w,b);
-        w_grad+=error*x;
-        b_grad+=error;
-    }
-    w_grad=(2.0/n)*w_grad;
-    b_grad=(2.0/n)*b_grad;
+pair<double,double >gradientDescent(const vector<vector<double> >&data,double w,double b,double learningRate){
+   double w_grad=0.0;
+   double b_grad=0.0;
+   int n=data.size();
 
-    w-=learningRate*w_grad;
-    b-=learningRate*b_grad;
+   for(int i=0;i<n;i++){
+    double x=data[i][0];
+    double y=data[i][1];
+    double error=predict(x,w,b);
+    w_grad+=error*x;
+    b_grad+=error;
 
-    return make_pair(w,b);
+   }
+   w_grad=(2.0/n)*w_grad;
+   b_grad=(2.0/n)*b_grad;
+
+   w-=learningRate*w_grad;
+   b-=learningRate*b_grad;
+
+   return make_pair(w, b);
 }
-pair<double, double>linear_Regression(const vector<vector<double> >&data,int epochs,double learningRate){
-    pair<double,double>weights=initial_Weight();
+
+pair<double, double> linearRegression(const vector<vector<double> >&data,int epochs,double learningRate){
+    pair<double, double>weights= initialWeigth();
     double w=weights.first;
     double b=weights.second;
+
     int n=data.size();
 
     for(int i=0;i<n;i++){
-        pair<double,double>result=gradient_Descent(data,w,b,learningRate);
+        pair<double, double>result=gradientDescent(data,w,b,learningRate);
         w=result.first;
         b=result.second;
         double mse=computeMSE(data,w,b);
+
     }
-    return make_pair(w,b);
+    return make_pair(w, b);
 }
 int main(){
     string filename="data.csv";
-    vector<vector<double> >data=readCSV(filename);
+    vector<vector<double> > data=readCSV(filename);
 
     int epochs=1000;
     double learningRate=0.01;
-    pair<double,double>coefficents=linear_Regression(data,epochs,learningRate);
+
+    pair<double, double>coefficents=linearRegression(data,epochs,learningRate);
     double w=coefficents.first;
     double b=coefficents.second;
 
-    cout<<"Final coefficents: w= "<<w<<", b= "<<b<<endl
+    cout<<"Final coefficents: w= "<<w<<", b= "<<b<<endl;
+
+
 }
